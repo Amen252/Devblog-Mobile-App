@@ -6,7 +6,8 @@ import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
@@ -26,11 +27,17 @@ class DevBlogApp extends StatefulWidget {
 }
 
 class _DevBlogAppState extends State<DevBlogApp> {
+  bool _isInit = false;
+
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() =>
-        Provider.of<AuthProvider>(context, listen: false).tryAutoLogin());
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((_) {
+        print("AutoLogin complete");
+      });
+      _isInit = true;
+    }
   }
 
   @override
@@ -38,12 +45,22 @@ class _DevBlogAppState extends State<DevBlogApp> {
     return MaterialApp(
       title: 'DevBlog',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
-          if (auth.isLoading) {
+          if (auth.isLoading && !auth.isAuthenticated) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              backgroundColor: AppTheme.backgroundColor,
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(color: AppTheme.primaryColor),
+                    SizedBox(height: 16),
+                    Text('Starting DevBlog...', style: TextStyle(color: AppTheme.textColor)),
+                  ],
+                ),
+              ),
             );
           }
           return auth.isAuthenticated ? const HomeScreen() : const LoginScreen();

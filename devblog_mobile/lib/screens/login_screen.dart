@@ -25,7 +25,10 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppTheme.accentColor,
+          ),
         );
       }
     }
@@ -42,39 +45,52 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 80),
-                Text(
-                  'Welcome Back!',
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.textColor,
-                  ),
+                // Logo
+                Row(
+                   children: [
+                     Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryColor.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.code, color: AppTheme.primaryColor, size: 32),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'DevBlog',
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white),
+                    ),
+                   ],
+                ),
+                const SizedBox(height: 48),
+                const Text(
+                  'Welcome Back',
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Sign in to your account and start blogging.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                const Text(
+                  'Sign in to your dev account.',
+                  style: TextStyle(color: AppTheme.textSecondaryColor, fontSize: 16),
                 ),
                 const SizedBox(height: 48),
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
-                    hintText: 'Email Address',
-                    prefixIcon: Icon(Icons.email_outlined),
+                    labelText: 'Email',
+                    hintText: 'email@example.com',
                   ),
-                  keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
-                    hintText: 'Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    labelText: 'Password',
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                        color: AppTheme.textSecondaryColor,
                       ),
                       onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                     ),
@@ -85,9 +101,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context, auth, _) {
                     return ElevatedButton(
                       onPressed: auth.isLoading ? null : _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 56),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
                       child: auth.isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Sign In'),
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                            )
+                          : const Text('Login', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     );
                   },
                 ),
@@ -101,12 +127,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                     child: RichText(
-                      text: TextSpan(
-                        text: "Don't have an account? ",
-                        style: TextStyle(color: Colors.grey[600]),
-                        children: const [
+                      text: const TextSpan(
+                        text: "New here? ",
+                        style: TextStyle(color: AppTheme.textSecondaryColor),
+                        children: [
                           TextSpan(
-                            text: 'Sign Up',
+                            text: 'Create account',
                             style: TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,

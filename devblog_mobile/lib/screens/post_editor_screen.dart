@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/post_model.dart';
 import '../providers/post_provider.dart';
+import '../theme/app_theme.dart';
 
 class PostEditorScreen extends StatefulWidget {
   final Post? post;
@@ -13,43 +14,47 @@ class PostEditorScreen extends StatefulWidget {
 }
 
 class _PostEditorScreenState extends State<PostEditorScreen> {
-  final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _contentController;
-  late String _category;
+  late String _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.post?.title ?? '');
     _contentController = TextEditingController(text: widget.post?.content ?? '');
-    _category = widget.post?.category ?? 'General';
+    _selectedCategory = widget.post?.category ?? 'Technology';
   }
 
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
 
+  Future<void> _savePost() async {
     final postProvider = Provider.of<PostProvider>(context, listen: false);
     try {
       if (widget.post == null) {
         await postProvider.createPost(
           _titleController.text,
           _contentController.text,
-          _category,
+          _selectedCategory,
         );
       } else {
         await postProvider.updatePost(
           widget.post!.id,
           _titleController.text,
           _contentController.text,
-          _category,
+          _selectedCategory,
         );
       }
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.accentColor),
         );
       }
     }
@@ -57,60 +62,61 @@ class _PostEditorScreenState extends State<PostEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.post != null;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Post' : 'New Post'),
+        title: Text(widget.post == null ? 'Create Post' : 'Edit Post'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _save,
+            icon: const Icon(Icons.check_rounded, color: AppTheme.secondaryColor, size: 28),
+            onPressed: _savePost,
           ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              DropdownButtonFormField<String>(
-                value: _category,
-                decoration: const InputDecoration(labelText: 'Category'),
-                items: ['General', 'Tech', 'Design', 'Life']
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (val) => setState(() => _category = val!),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'What\'s on your mind?',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppTheme.textColor),
+            ),
+            const SizedBox(height: 32),
+            TextField(
+              controller: _titleController,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              decoration: const InputDecoration(
+                labelText: 'Post Title',
+                hintText: 'Give your post a title...',
               ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  hintText: 'Post Title',
-                  labelText: 'Title',
-                ),
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                validator: (val) => val == null || val.isEmpty ? 'Title is required' : null,
+            ),
+            const SizedBox(height: 24),
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              dropdownColor: AppTheme.surfaceColor,
+              decoration: const InputDecoration(
+                labelText: 'Category',
+                prefixIcon: Icon(Icons.category_outlined),
               ),
-              const SizedBox(height: 24),
-              TextFormField(
-                controller: _contentController,
-                decoration: const InputDecoration(
-                  hintText: 'Write your story...',
-                  labelText: 'Content',
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 15,
-                validator: (val) => val == null || val.isEmpty ? 'Content is required' : null,
+              items: ['Technology', 'Lifestyle', 'Education', 'Other']
+                  .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                  .toList(),
+              onChanged: (val) => setState(() => _selectedCategory = val!),
+            ),
+            const SizedBox(height: 24),
+            TextField(
+              controller: _contentController,
+              maxLines: 12,
+              style: const TextStyle(fontSize: 16, height: 1.5),
+              decoration: const InputDecoration(
+                labelText: 'Content',
+                hintText: 'Share your thoughts with the world...',
+                alignLabelWithHint: true,
               ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: _save,
-                child: Text(isEditing ? 'Update Post' : 'Publish Post'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 40),
+          ],
         ),
       ),
     );

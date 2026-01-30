@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/post_model.dart';
@@ -7,6 +8,7 @@ import '../models/user_model.dart';
 class ApiService {
   // Use 10.0.2.2 for Android Emulator, localhost for iOS/Web, or your local IP for real devices.
   static const String baseUrl = 'http://10.0.2.2:5000/api';
+  static const Duration _timeout = Duration(seconds: 5);
 
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -28,37 +30,45 @@ class ApiService {
 
   // Auth
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      ).timeout(_timeout);
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['accessToken']);
-      await prefs.setString('userId', data['_id']);
-      return {'success': true, 'user': User.fromJson(data)};
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['accessToken']);
+        await prefs.setString('userId', data['_id']);
+        return {'success': true, 'user': User.fromJson(data)};
+      }
+      return {'success': false, 'message': data['message'] ?? 'Login failed'};
+    } catch (e) {
+      return {'success': false, 'message': 'Connection timeout. Is the server running?'};
     }
-    return {'success': false, 'message': data['message'] ?? 'Login failed'};
   }
 
   Future<Map<String, dynamic>> register(String name, String email, String password, {required String gender}) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'name': name, 'email': email, 'password': password, 'gender': gender}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'name': name, 'email': email, 'password': password, 'gender': gender}),
+      ).timeout(_timeout);
 
-    final data = jsonDecode(response.body);
-    if (response.statusCode == 201) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['accessToken']);
-      await prefs.setString('userId', data['_id']);
-      return {'success': true, 'user': User.fromJson(data)};
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 201) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', data['accessToken']);
+        await prefs.setString('userId', data['_id']);
+        return {'success': true, 'user': User.fromJson(data)};
+      }
+      return {'success': false, 'message': data['message'] ?? 'Registration failed'};
+    } catch (e) {
+      return {'success': false, 'message': 'Connection timeout. Is the server running?'};
     }
-    return {'success': false, 'message': data['message'] ?? 'Registration failed'};
   }
 
   Future<User> updateProfile(String name, String email, String gender) async {
@@ -70,7 +80,7 @@ class ApiService {
         'email': email,
         'gender': gender,
       }),
-    );
+    ).timeout(_timeout);
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
@@ -86,13 +96,17 @@ class ApiService {
 
   // Posts
   Future<List<Post>> getPosts() async {
-    final response = await http.get(Uri.parse('$baseUrl/posts'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      final List<dynamic> postsJson = data['posts'];
-      return postsJson.map((json) => Post.fromJson(json)).toList();
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/posts')).timeout(_timeout);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<dynamic> postsJson = data['posts'];
+        return postsJson.map((json) => Post.fromJson(json)).toList();
+      }
+      throw Exception('Failed to load posts');
+    } catch (e) {
+      throw Exception('Server unreachable. Please check your connection.');
     }
-    throw Exception('Failed to load posts');
   }
 
   Future<Post> createPost(String title, String content, String category) async {
@@ -104,7 +118,7 @@ class ApiService {
         'content': content,
         'category': category,
       }),
-    );
+    ).timeout(_timeout);
 
     if (response.statusCode == 201) {
       return Post.fromJson(jsonDecode(response.body));
@@ -121,7 +135,7 @@ class ApiService {
         'content': content,
         'category': category,
       }),
-    );
+    ).timeout(_timeout);
 
     if (response.statusCode == 200) {
       return Post.fromJson(jsonDecode(response.body));
@@ -133,7 +147,7 @@ class ApiService {
     final response = await http.delete(
       Uri.parse('$baseUrl/posts/$id'),
       headers: await _getHeaders(),
-    );
+    ).timeout(_timeout);
 
     if (response.statusCode != 200) {
       throw Exception(jsonDecode(response.body)['message'] ?? 'Failed to delete post');
@@ -141,13 +155,17 @@ class ApiService {
   }
 
   Future<User?> getMe() async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/auth/me'),
-      headers: await _getHeaders(),
-    );
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/auth/me'),
+        headers: await _getHeaders(),
+      ).timeout(const Duration(seconds: 2)); // Short timeout for auto-login
 
-    if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      if (response.statusCode == 200) {
+        return User.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      print('Auto-login connection failed: $e');
     }
     return null;
   }
