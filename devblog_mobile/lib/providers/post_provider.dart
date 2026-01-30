@@ -6,16 +6,21 @@ class PostProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
   List<Post> _posts = [];
   bool _isLoading = false;
+  String? _error;
 
   List<Post> get posts => _posts;
   bool get isLoading => _isLoading;
+  String? get error => _error;
 
   Future<void> fetchPosts() async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
       _posts = await _apiService.getPosts();
+    } catch (e) {
+      _error = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();

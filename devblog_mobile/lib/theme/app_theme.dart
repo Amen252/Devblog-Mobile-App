@@ -16,8 +16,7 @@ class AppTheme {
         seedColor: primaryColor,
         primary: primaryColor,
         secondary: secondaryColor,
-        background: backgroundColor,
-        surface: surfaceColor,
+        surface: backgroundColor,
       ),
       textTheme: GoogleFonts.outfitTextTheme().apply(
         bodyColor: textColor,
@@ -65,7 +64,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),

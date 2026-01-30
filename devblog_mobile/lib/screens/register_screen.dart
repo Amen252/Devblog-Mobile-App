@@ -2,26 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _selectedGender = 'male';
   bool _isPasswordVisible = false;
 
-  Future<void> _login() async {
+  Future<void> _register() async {
     try {
-      await Provider.of<AuthProvider>(context, listen: false).login(
+      await Provider.of<AuthProvider>(context, listen: false).register(
+        _nameController.text.trim(),
         _emailController.text.trim(),
         _passwordController.text.trim(),
+        gender: _selectedGender,
       );
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -34,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -41,9 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 80),
+                const SizedBox(height: 10),
                 Text(
-                  'Welcome Back!',
+                  'Create Account',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.textColor,
@@ -51,12 +56,39 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to your account and start blogging.',
+                  'Join the DevBlog community today.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 48),
+                const SizedBox(height: 32),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppTheme.primaryColor.withOpacity(0.1), width: 2),
+                    ),
+                    child: CircleAvatar(
+                      radius: 40,
+                      backgroundColor: Colors.grey[100],
+                      backgroundImage: NetworkImage(
+                        _selectedGender == 'female'
+                            ? 'https://api.dicebear.com/7.x/avataaars/png?seed=Anya&gender=female&backgroundColor=ffdfbf'
+                            : 'https://api.dicebear.com/7.x/avataaars/png?seed=Felix&gender=male&backgroundColor=b6e3f4',
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Full Name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _emailController,
                   decoration: const InputDecoration(
@@ -65,7 +97,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedGender,
+                  decoration: const InputDecoration(
+                    hintText: 'Gender',
+                    prefixIcon: Icon(Icons.people_outline),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'male', child: Text('Male')),
+                    DropdownMenuItem(value: 'female', child: Text('Female')),
+                    DropdownMenuItem(value: 'other', child: Text('Other')),
+                  ],
+                  onChanged: (val) => setState(() => _selectedGender = val!),
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
                   obscureText: !_isPasswordVisible,
@@ -84,29 +130,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 Consumer<AuthProvider>(
                   builder: (context, auth, _) {
                     return ElevatedButton(
-                      onPressed: auth.isLoading ? null : _login,
+                      onPressed: auth.isLoading ? null : _register,
                       child: auth.isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text('Sign In'),
+                          : const Text('Sign Up'),
                     );
                   },
                 ),
                 const SizedBox(height: 24),
                 Center(
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
-                      );
-                    },
+                    onPressed: () => Navigator.pop(context),
                     child: RichText(
                       text: TextSpan(
-                        text: "Don't have an account? ",
+                        text: "Already have an account? ",
                         style: TextStyle(color: Colors.grey[600]),
                         children: const [
                           TextSpan(
-                            text: 'Sign Up',
+                            text: 'Sign In',
                             style: TextStyle(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
@@ -117,6 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

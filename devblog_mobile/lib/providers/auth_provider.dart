@@ -28,6 +28,36 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> register(String name, String email, String password, {required String gender}) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await _apiService.register(name, email, password, gender: gender);
+      if (result['success']) {
+        _user = result['user'];
+      } else {
+        throw Exception(result['message']);
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProfile(String name, String email, String gender) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final updatedUser = await _apiService.updateProfile(name, email, gender);
+      _user = updatedUser;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> logout() async {
     await _apiService.logout();
     _user = null;

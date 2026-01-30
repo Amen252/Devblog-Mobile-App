@@ -37,11 +37,45 @@ class ApiService {
     final data = jsonDecode(response.body);
     if (response.statusCode == 200) {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', data['token']);
+      await prefs.setString('token', data['accessToken']);
       await prefs.setString('userId', data['_id']);
       return {'success': true, 'user': User.fromJson(data)};
     }
     return {'success': false, 'message': data['message'] ?? 'Login failed'};
+  }
+
+  Future<Map<String, dynamic>> register(String name, String email, String password, {required String gender}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/register'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'name': name, 'email': email, 'password': password, 'gender': gender}),
+    );
+
+    final data = jsonDecode(response.body);
+    if (response.statusCode == 201) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', data['accessToken']);
+      await prefs.setString('userId', data['_id']);
+      return {'success': true, 'user': User.fromJson(data)};
+    }
+    return {'success': false, 'message': data['message'] ?? 'Registration failed'};
+  }
+
+  Future<User> updateProfile(String name, String email, String gender) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/auth/profile'),
+      headers: await _getHeaders(),
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'gender': gender,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    }
+    throw Exception(jsonDecode(response.body)['message'] ?? 'Failed to update profile');
   }
 
   Future<void> logout() async {
@@ -54,8 +88,9 @@ class ApiService {
   Future<List<Post>> getPosts() async {
     final response = await http.get(Uri.parse('$baseUrl/posts'));
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => Post.fromJson(json)).toList();
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      final List<dynamic> postsJson = data['posts'];
+      return postsJson.map((json) => Post.fromJson(json)).toList();
     }
     throw Exception('Failed to load posts');
   }
