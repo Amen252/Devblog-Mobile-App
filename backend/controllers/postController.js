@@ -52,8 +52,12 @@ const createPost = async (req, res) => {
             author: req.user._id,
             category: req.body.category,
         });
-        console.log('Post Created with Author:', post.author);
-        res.status(201).json(post);
+
+        // Populate author before sending back to frontend
+        const populatedPost = await Post.findById(post._id).populate('author', 'name email');
+
+        console.log('Post Created and Populated');
+        res.status(201).json(populatedPost);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -96,7 +100,8 @@ const updatePost = async (req, res) => {
 
         const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
-        });
+        }).populate('author', 'name email');
+
         res.status(200).json(updatedPost);
     } catch (error) {
         res.status(500).json({ message: error.message });
