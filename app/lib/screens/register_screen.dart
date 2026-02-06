@@ -71,13 +71,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       shape: BoxShape.circle,
                       border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2), width: 2),
                     ),
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundColor: AppTheme.surfaceColor,
-                      backgroundImage: NetworkImage(
+                    child: Container(
+                      width: 80,
+                      height: 80,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.surfaceColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
                         _selectedGender == 'female'
-                            ? 'https://api.dicebear.com/7.x/personas/png?seed=Anya&backgroundColor=f1f5f9'
-                            : 'https://api.dicebear.com/7.x/personas/png?seed=Felix&backgroundColor=e2e8f0',
+                            ? Icons.woman_rounded
+                            : Icons.man_rounded,
+                        size: 50,
+                        color: AppTheme.primaryColor,
                       ),
                     ),
                   ),

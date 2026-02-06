@@ -56,15 +56,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  String _getAvatarUrl(String gender, String name) {
-    final seed = name.isEmpty ? 'default' : name;
-    if (gender == 'female') {
-      return 'https://api.dicebear.com/7.x/personas/png?seed=$seed&backgroundColor=f1f5f9';
-    } else {
-      return 'https://api.dicebear.com/7.x/personas/png?seed=$seed&backgroundColor=e2e8f0';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
@@ -110,11 +101,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 4,
                           ),
                         ),
-                        child: CircleAvatar(
-                          radius: 56,
-                          backgroundColor: AppTheme.backgroundColor,
-                          backgroundImage: NetworkImage(
-                            _getAvatarUrl(user?.gender ?? 'male', user?.name ?? 'Guest'),
+                        child: Container(
+                          width: 112,
+                          height: 112,
+                          decoration: const BoxDecoration(
+                            color: AppTheme.backgroundColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            user?.gender == 'female'
+                                ? Icons.woman_rounded
+                                : Icons.man_rounded,
+                            size: 80,
+                            color: AppTheme.primaryColor,
                           ),
                         ),
                       ),

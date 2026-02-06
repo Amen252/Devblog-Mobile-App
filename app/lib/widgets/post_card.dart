@@ -36,11 +36,19 @@ class PostCard extends StatelessWidget {
               // Qaybta sare: Sawirka iyo magaca qofka qoray.
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: AppTheme.surfaceColor,
-                    backgroundImage: NetworkImage(
-                      'https://api.dicebear.com/7.x/personas/png?seed=${post.authorName}&backgroundColor=e2e8f0',
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      post.authorGender == 'female'
+                          ? Icons.woman_rounded
+                          : Icons.man_rounded,
+                      size: 20,
+                      color: AppTheme.primaryColor,
                     ),
                   ),
                   const SizedBox(width: 10),

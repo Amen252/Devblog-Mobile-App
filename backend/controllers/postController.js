@@ -13,7 +13,7 @@ const getAllPosts = async (req, res) => {
         console.log(`Fetching posts - Page: ${page}, Limit: ${limit}, Skip: ${skip}`);
 
         const posts = await Post.find()
-            .populate('author', 'name email')
+            .populate('author', 'name email gender')
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
@@ -54,7 +54,7 @@ const createPost = async (req, res) => {
         });
 
         // Populate author before sending back to frontend
-        const populatedPost = await Post.findById(post._id).populate('author', 'name email');
+        const populatedPost = await Post.findById(post._id).populate('author', 'name email gender');
 
         console.log('Post Created and Populated');
         res.status(201).json(populatedPost);
@@ -68,7 +68,7 @@ const createPost = async (req, res) => {
 // @access  Public
 const getPostById = async (req, res) => {
     try {
-        const post = await Post.findById(req.params.id).populate('author', 'name email');
+        const post = await Post.findById(req.params.id).populate('author', 'name email gender');
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
@@ -100,7 +100,7 @@ const updatePost = async (req, res) => {
 
         const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
-        }).populate('author', 'name email');
+        }).populate('author', 'name email gender');
 
         res.status(200).json(updatedPost);
     } catch (error) {

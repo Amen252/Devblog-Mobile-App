@@ -17,29 +17,23 @@ class LogoPreviewScreen extends StatelessWidget {
           children: [
             // Logo Container-ka oo cad (White) si uu u muuqdo Icon professional ah
             Container(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(40), // More modern square-rounded look
+                borderRadius: BorderRadius.circular(40),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 30,
-                    offset: const Offset(0, 10),
+                    color: Colors.black.withOpacity(0.12),
+                    blurRadius: 40,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
               child: Image.asset(
                 'assets/icon/icon.png',
-                width: 150,
-                height: 150,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.laptop_mac_rounded,
-                    color: AppTheme.primaryColor,
-                    size: 150,
-                  );
-                },
+                width: 180,
+                height: 180,
+                fit: BoxFit.contain,
               ),
             ),
             const SizedBox(height: 48),
@@ -47,9 +41,9 @@ class LogoPreviewScreen extends StatelessWidget {
               'DevBlog',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 48,
+                fontSize: 56,
                 fontWeight: FontWeight.w900,
-                letterSpacing: -1,
+                letterSpacing: -1.5,
               ),
             ),
             const SizedBox(height: 100),

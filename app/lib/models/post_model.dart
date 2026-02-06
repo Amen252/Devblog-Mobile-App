@@ -4,6 +4,7 @@ class Post {
   final String content;
   final String authorId;
   final String authorName;
+  final String authorGender;
   final String category;
   final DateTime createdAt;
 
@@ -13,6 +14,7 @@ class Post {
     required this.content,
     required this.authorId,
     required this.authorName,
+    required this.authorGender,
     required this.category,
     required this.createdAt,
   });
@@ -24,6 +26,7 @@ class Post {
       content: json['content'],
       authorId: json['author'] is Map ? json['author']['_id'] : json['author'],
       authorName: json['author'] is Map ? json['author']['name'] ?? 'Unknown' : 'Unknown',
+      authorGender: json['author'] is Map ? json['author']['gender'] ?? 'male' : 'male',
       category: json['category'] ?? 'General',
       createdAt: DateTime.parse(json['createdAt']),
     );
