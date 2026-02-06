@@ -74,10 +74,9 @@ class PostDetailScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
-                  child: Text(
-                    post.authorName[0].toUpperCase(),
-                    style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
+                  backgroundColor: AppTheme.surfaceColor,
+                  backgroundImage: NetworkImage(
+                    'https://api.dicebear.com/7.x/personas/png?seed=${post.authorName}&backgroundColor=e2e8f0',
                   ),
                 ),
                 const SizedBox(width: 12),

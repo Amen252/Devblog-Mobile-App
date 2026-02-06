@@ -37,11 +37,10 @@ class PostCard extends StatelessWidget {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: 14,
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                    child: Text(
-                      post.authorName[0].toUpperCase(),
-                      style: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+                    radius: 16,
+                    backgroundColor: AppTheme.surfaceColor,
+                    backgroundImage: NetworkImage(
+                      'https://api.dicebear.com/7.x/personas/png?seed=${post.authorName}&backgroundColor=e2e8f0',
                     ),
                   ),
                   const SizedBox(width: 10),

@@ -20,7 +20,7 @@ class LogoPreviewScreen extends StatelessWidget {
               padding: const EdgeInsets.all(40),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(100), // Rounded corners
+                borderRadius: BorderRadius.circular(40), // More modern square-rounded look
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -29,10 +29,17 @@ class LogoPreviewScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.terminal_rounded,
-                color: AppTheme.primaryColor,
-                size: 150, // Logo-ga oo aad u weyn
+              child: Image.asset(
+                'assets/icon/icon.png',
+                width: 150,
+                height: 150,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.laptop_mac_rounded,
+                    color: AppTheme.primaryColor,
+                    size: 150,
+                  );
+                },
               ),
             ),
             const SizedBox(height: 48),
