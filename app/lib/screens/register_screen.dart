@@ -78,10 +78,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: AppTheme.surfaceColor,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        _selectedGender == 'female'
-                            ? Icons.woman_rounded
-                            : Icons.man_rounded,
+                      child: const Icon(
+                        Icons.person_outline_rounded,
                         size: 50,
                         color: AppTheme.primaryColor,
                       ),

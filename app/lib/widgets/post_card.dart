@@ -43,10 +43,8 @@ class PostCard extends StatelessWidget {
                       color: AppTheme.primaryColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      post.authorGender == 'female'
-                          ? Icons.woman_rounded
-                          : Icons.man_rounded,
+                    child: const Icon(
+                      Icons.person_rounded,
                       size: 20,
                       color: AppTheme.primaryColor,
                     ),

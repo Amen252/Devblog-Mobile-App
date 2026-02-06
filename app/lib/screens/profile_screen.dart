@@ -108,10 +108,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             color: AppTheme.backgroundColor,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            user?.gender == 'female'
-                                ? Icons.woman_rounded
-                                : Icons.man_rounded,
+                          child: const Icon(
+                            Icons.person_rounded,
                             size: 80,
                             color: AppTheme.primaryColor,
                           ),

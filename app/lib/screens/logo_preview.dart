@@ -34,6 +34,13 @@ class LogoPreviewScreen extends StatelessWidget {
                 width: 180,
                 height: 180,
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.menu_book_rounded,
+                    color: AppTheme.primaryColor,
+                    size: 150,
+                  );
+                },
               ),
             ),
             const SizedBox(height: 48),

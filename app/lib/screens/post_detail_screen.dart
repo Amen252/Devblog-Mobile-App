@@ -79,10 +79,8 @@ class PostDetailScreen extends StatelessWidget {
                     color: AppTheme.primaryColor.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    post.authorGender == 'female'
-                        ? Icons.woman_rounded
-                        : Icons.man_rounded,
+                  child: const Icon(
+                    Icons.person_rounded,
                     size: 24,
                     color: AppTheme.primaryColor,
                   ),
