@@ -2,18 +2,25 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 import '../services/api_service.dart';
 
-// AuthProvider: Waxay mas'uul ka tahay maamulidda xogta isticmaalaha (User State)
-// iyo hubinta inuu qofku galay app-ka iyo in kale.
+// AuthProvider: Fasalkan wuxuu maamulaa dhammaan hannaanka aqoonsiga (Authentication).
+// Wuxuu hubiyaa inuu qofku galay app-ka iyo xogta uu leeyahay.
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService = ApiService();
-  User? _user; // Xogta qofka hadda isticmaalaya app-ka
-  bool _isLoading = false; // Maqaamka rarka (Loading status)
+  
+  // Xogta qofka (User) hadda isticmaalaya app-ka
+  User? _user; 
+  
+  // Maqaamka rarka (Loading) si UI-ga loogu muujiyo 'CircularProgressIndicator'
+  bool _isLoading = false; 
 
+  // Meesha laga aqrinayo xogta isticmaalaha
   User? get user => _user;
   bool get isLoading => _isLoading;
+  
+  // Hubinta haddii uu user-ku 'authenticated' yahay iyo haddii kale
   bool get isAuthenticated => _user != null;
 
-  // Shaqada Login-ka: Waxay la xiriirtaa API-ga si loo xaqiijiyo user-ka.
+  // login: Shaqada lagu galayo app-ka (Login logic)
   Future<void> login(String email, String password) async {
     _isLoading = true;
     notifyListeners(); // Waxay u sheegtaa UI-ga inuu is beddelo (Loading start)
@@ -31,7 +38,7 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Shaqada Is-diiwaangelinta: Waxay abuurtaa isticmaale cusub backend-ka.
+  // register: Shaqada is-diiwaangelinta user cusub (Sign Up)
   Future<void> register(String name, String email, String password, {required String gender}) async {
     _isLoading = true;
     notifyListeners();
@@ -39,13 +46,13 @@ class AuthProvider with ChangeNotifier {
     try {
       final result = await _apiService.register(name, email, password, gender: gender);
       if (result['success']) {
-        _user = result['user'];
+        _user = result['user']; // Marka is-diiwaangelintu dhamaato, si toos ah app-ka u gal
       } else {
         throw Exception(result['message']);
       }
     } finally {
       _isLoading = false;
-      notifyListeners();
+      notifyListeners(); // UI-ga u sheeg inuu isbeddelay
     }
   }
 
@@ -70,19 +77,19 @@ class AuthProvider with ChangeNotifier {
     notifyListeners(); // UI-ga ayaa isla markiiba dib u noqonaya Login screen
   }
 
-  // Shaqadan waxay isku daydaa inay qofka gashiso app-ka si toos ah (Auto-login)
-  // iyadoo la helayo token-ka hore u kaydsanaa.
+  // tryAutoLogin: Shaqadan waxay isku daydaa inay user-ka hore u soo gasho (Auto-login).
+  // Waxay ka akhrisaa token-ka SharedPreferences marka app-ka la bilaabo.
   Future<void> tryAutoLogin() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final me = await _apiService.getMe();
+      final me = await _apiService.getMe(); // Xogta user-ka ka soo weydii backend-ka
       if (me != null) {
-        _user = me;
+        _user = me; // Haddii uu token-ku shaqeynayo, dhig user-ka halkan
       }
     } catch (_) {
-      // Wixii khalad ah halkan waa lagu iska indha tiri karaa.
+      // Halkan waxaa la qabanayaa wixii khaladaad ah ee ka yimaada xiriirka
     } finally {
       _isLoading = false;
       notifyListeners();

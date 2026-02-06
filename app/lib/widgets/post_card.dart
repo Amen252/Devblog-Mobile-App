@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/post_model.dart';
 import '../providers/post_provider.dart';
+import '../providers/auth_provider.dart';
 import '../screens/post_detail_screen.dart';
 import '../theme/app_theme.dart';
 

@@ -87,6 +87,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  String _selectedCategory = 'All Feed';
+
   @override
   void initState() {
     super.initState();
@@ -103,56 +105,102 @@ class _HomeViewState extends State<HomeView> {
           IconButton(icon: const Icon(Icons.notifications_none_rounded), onPressed: () {}),
           const SizedBox(width: 8),
         ],
-      ),
-      body: Column(
-        children: [
-          _buildCategoryBar(),
-          const Divider(height: 1, color: AppTheme.dividerColor),
-          Expanded(
-            child: Consumer<PostProvider>(
-              builder: (context, postProvider, _) {
-                // Haddii xogta la soo raryo oo liisku faaruq yahay, tusi Loading.
-                if (postProvider.isLoading && postProvider.posts.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                // RefreshIndicator wuxuu u oggolaanayaa qofka inuu liiska hoos u jiido si loo cusubaysiiyo.
-                return RefreshIndicator(
-                  onRefresh: postProvider.fetchPosts,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    itemCount: postProvider.posts.length,
-                    itemBuilder: (context, index) => PostCard(post: postProvider.posts[index]),
-                  ),
-                );
-              },
-            ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Column(
+            children: [
+              _buildCategoryBar(),
+              const Divider(height: 1, color: AppTheme.dividerColor),
+            ],
           ),
-        ],
+        ),
+      ),
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, _) {
+          // Filter posts based on selected category
+          final filteredPosts = _selectedCategory == 'All Feed'
+              ? postProvider.posts
+              : postProvider.posts.where((p) => p.category.toLowerCase() == _selectedCategory.toLowerCase()).toList();
+
+          // Haddii xogta la soo raryo oo liisku faaruq yahay, tusi Loading.
+          if (postProvider.isLoading && postProvider.posts.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (filteredPosts.isEmpty && !postProvider.isLoading) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.category_outlined, size: 64, color: AppTheme.dividerColor),
+                  const SizedBox(height: 16),
+                  Text('No posts in $_selectedCategory', style: const TextStyle(color: AppTheme.textSecondaryColor)),
+                ],
+              ),
+            );
+          }
+
+          // RefreshIndicator wuxuu u oggolaanayaa qofka inuu liiska hoos u jiido si loo cusubaysiiyo.
+          return RefreshIndicator(
+            onRefresh: postProvider.fetchPosts,
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+              itemCount: filteredPosts.length,
+              itemBuilder: (context, index) => PostCard(post: filteredPosts[index]),
+            ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildCategoryBar() {
-    final categories = ['All Feed', 'Programming', 'UI/UX', 'General'];
+    final categories = ['All Feed', 'Programming', 'UI/UX', 'DevOps', 'General'];
     return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      height: 48,
+      decoration: const BoxDecoration(
+        color: AppTheme.surfaceColor,
+      ),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          final isSelected = index == 0;
-          return Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: Center(
-              child: Text(
-                categories[index],
-                style: TextStyle(
-                  color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryColor,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  fontSize: 14,
-                ),
+          final category = categories[index];
+          final isSelected = category == _selectedCategory;
+          
+          return InkWell(
+            onTap: () {
+              setState(() => _selectedCategory = category);
+              // Proactively fetch or filter can be done here if needed
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    category,
+                    style: TextStyle(
+                      color: isSelected ? AppTheme.primaryColor : AppTheme.textSecondaryColor,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                      fontSize: 14,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    height: 2.5,
+                    width: isSelected ? 20 : 0,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

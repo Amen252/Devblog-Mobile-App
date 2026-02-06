@@ -59,9 +59,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _getAvatarUrl(String gender, String name) {
     final seed = name.isEmpty ? 'default' : name;
     if (gender == 'female') {
-      return 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed&gender=female&backgroundColor=ffdfbf';
+      return 'https://api.dicebear.com/7.x/notionists/png?seed=$seed&backgroundColor=ffdfbf';
     } else {
-      return 'https://api.dicebear.com/7.x/avataaars/png?seed=$seed&gender=male&backgroundColor=b6e3f4';
+      return 'https://api.dicebear.com/7.x/notionists/png?seed=$seed&backgroundColor=b6e3f4';
     }
   }
 

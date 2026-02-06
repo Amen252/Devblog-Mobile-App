@@ -76,8 +76,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       backgroundColor: AppTheme.surfaceColor,
                       backgroundImage: NetworkImage(
                         _selectedGender == 'female'
-                            ? 'https://api.dicebear.com/7.x/avataaars/png?seed=Anya&gender=female&backgroundColor=ffdfbf'
-                            : 'https://api.dicebear.com/7.x/avataaars/png?seed=Felix&gender=male&backgroundColor=b6e3f4',
+                            ? 'https://api.dicebear.com/7.x/notionists/png?seed=Anya&backgroundColor=ffdfbf'
+                            : 'https://api.dicebear.com/7.x/notionists/png?seed=Felix&backgroundColor=b6e3f4',
                       ),
                     ),
                   ),

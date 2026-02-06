@@ -5,31 +5,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/post_model.dart';
 import '../models/user_model.dart';
 
+// ApiService: Fasalkan wuxuu mas'uul ka yahay dhammaan xiriirka u dhexeeya App-ka iyo Server-ka (Backend).
+// Waxaan halkan ku qoreynaa functions-ka HTTP-ga (GET, POST, PUT, DELETE).
 class ApiService {
   // Ciwaanka asalka ah ee Backend-ka. 
-  // 10.0.2.2 waxaa loo isticmaalaa Android Emulator si uu ula xiriiro localhost-ka computer-ka.
-  static const String baseUrl = 'http://10.0.2.2:5000/api';
-  static const Duration _timeout = Duration(seconds: 5);
+  // 1: Local Emulator (Android) -> 'http://10.0.2.2:5000/api'
+  // 2: Production (Render) -> 'https://YOUR-RENDER-URL.onrender.com/api'
+  
+  static const bool _isProduction = true; // Enabled production mode for APK
+  
+  static const String _localUrl = 'http://10.0.2.2:5000/api';
+  static const String _prodUrl = 'https://devblog-api-hsdf.onrender.com/api'; // Live Render URL
+  
+  static const String baseUrl = _isProduction ? _prodUrl : _localUrl;
+  static const Duration _timeout = Duration(seconds: 30); // Increased timeout for Render cold starts
 
-  // Shaqadan waxay soo celisaa 'token'-ka kaydsan si loogu xaqiijiyo qofka isticmaalaya app-ka.
+  // Shaqadan waxay SharedPreferences ka soo akhrisaa 'Token'-ka si loo ogaado user-ka.
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    return prefs.getString('token'); // Token-ku waa furaha gelitaanka API-ga.
   }
 
-  // Shaqadan waxay soo celisaa ID-ga gaarka ah ee qofka isticmaalaya app-ka.
-  Future<String?> getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userId');
-  }
-
-  // Shaqadan waxay diyaarisaa 'Headers' loogu baahan yahay codsiyada API-ga, 
-  // iyada oo raacinaysa Authorization Token haddii uu jiro.
+  // function-kan wuxuu diyaarinayaa Header-ka codsi kasta (Request).
+  // Wuxuu raacinayaa Token-ka 'Authorization' si server-ku noo aqoonsado.
   Future<Map<String, String>> _getHeaders() async {
     final token = await getToken();
     return {
-      'Content-Type': 'application/json',
-      if (token != null) 'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json', // Xogta aan direyno waa JSON.
+      if (token != null) 'Authorization': 'Bearer $token', // Token-ka raaci haddii uu jiro.
     };
   }
 
@@ -167,7 +170,8 @@ class ApiService {
     }
   }
 
-  // Shaqadan waxay soo celisaa xogta qofka hadda soo galay (Auto-login logic).
+  // getMe: Shaqadan waxaa loo isticmaalaa 'Auto-login'.
+  // Marka app-ka la furo, waxay xogta user-ka ka soo akhrisaa token-ka hadda jira.
   Future<User?> getMe() async {
     try {
       final response = await http.get(
@@ -176,12 +180,13 @@ class ApiService {
       ).timeout(const Duration(seconds: 2));
 
       if (response.statusCode == 200) {
+        // Haddii token-ku weli shaqeynayo, User object soo celi.
         return User.fromJson(jsonDecode(response.body));
       }
     } catch (e) {
-      print('Auto-login connection failed: $e');
+      print('Auto-login connection failed: $e'); // Cilad dhacday xilliga xiriirka.
     }
-    return null;
+    return null; // Haddii uu token-ku dhacay ama server-ku ciladoobo.
   }
 }
 
