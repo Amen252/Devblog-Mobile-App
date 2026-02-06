@@ -6,11 +6,13 @@ import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'theme/app_theme.dart';
 
+// Halkani waa barta uu app-ku ka bilaawdo (Entry Point)
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
+        // Waxaan halkan ku qeexeynaa Providers-ka maamulaya State-ka app-ka
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => PostProvider()),
       ],
@@ -33,8 +35,13 @@ class _DevBlogAppState extends State<DevBlogApp> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isInit) {
-      Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((_) {
-        print("AutoLogin complete");
+      // Marka app-ka la furo, wuxuu isku dayayaa inuu qofka si toos ah u gashiyo (Auto-login)
+      Future.microtask(() {
+        if (mounted) {
+          Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((_) {
+            print("AutoLogin complete");
+          });
+        }
       });
       _isInit = true;
     }
@@ -45,9 +52,10 @@ class _DevBlogAppState extends State<DevBlogApp> {
     return MaterialApp(
       title: 'DevBlog',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {
+          // Haddii uu raryo xogta auto-login-ka, show loading screen
           if (auth.isLoading && !auth.isAuthenticated) {
             return const Scaffold(
               backgroundColor: AppTheme.backgroundColor,
@@ -63,9 +71,11 @@ class _DevBlogAppState extends State<DevBlogApp> {
               ),
             );
           }
+          // Haddii uu qofku so galay (logged in), tusi HomeScreen, haddii kale tusi LoginScreen
           return auth.isAuthenticated ? const HomeScreen() : const LoginScreen();
         },
       ),
     );
   }
 }
+

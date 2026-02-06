@@ -78,7 +78,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('Profile'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: AppTheme.accentColor),
+            // Logout icon-ka ayaa hadda isticmaalaya primaryColor
+            icon: const Icon(Icons.logout, color: AppTheme.primaryColor),
             onPressed: () => auth.logout(),
           ),
         ],
@@ -169,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.article_outlined, size: 64, color: Colors.white.withOpacity(0.05)),
+                    Icon(Icons.article_outlined, size: 64, color: AppTheme.dividerColor),
                     const SizedBox(height: 16),
                     const Text('No posts yet', style: TextStyle(color: AppTheme.textSecondaryColor)),
                   ],
@@ -258,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () => setState(() => _isEditing = false),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                  side: const BorderSide(color: AppTheme.dividerColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
                 child: const Text('Cancel', style: TextStyle(color: AppTheme.textColor)),

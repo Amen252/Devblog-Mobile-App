@@ -4,6 +4,7 @@ import '../models/post_model.dart';
 import '../providers/post_provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import 'post_editor_screen.dart';
 
 class PostDetailScreen extends StatelessWidget {
   final Post post;
@@ -22,11 +23,17 @@ class PostDetailScreen extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.edit_outlined),
                   onPressed: () {
-                    // Navigate to editor in edit mode
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PostEditorScreen(post: post),
+                      ),
+                    );
                   },
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppTheme.accentColor),
+                  // Icon-ka tirtirista wuxuu isticmaalayaa primaryColor
+                  icon: const Icon(Icons.delete_outline, color: AppTheme.primaryColor),
                   onPressed: () => _confirmDelete(context),
                 ),
               ]
@@ -88,14 +95,14 @@ class PostDetailScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 32),
-            const Divider(color: Colors.white10),
+            const Divider(color: AppTheme.dividerColor),
             const SizedBox(height: 32),
             Text(
               post.content,
               style: const TextStyle(
                 fontSize: 17,
                 height: 1.7,
-                color: Color(0xFFE2E8F0),
+                color: AppTheme.textColor,
               ),
             ),
             const SizedBox(height: 48),
@@ -122,14 +129,27 @@ class PostDetailScreen extends StatelessWidget {
             child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondaryColor)),
           ),
           TextButton(
+            // Shaqada tirtirista qoraalka.
             onPressed: () async {
-              await Provider.of<PostProvider>(context, listen: false).deletePost(post.id);
-              if (context.mounted) {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to home
+              try {
+                await Provider.of<PostProvider>(context, listen: false).deletePost(post.id);
+                if (context.mounted) {
+                  Navigator.pop(context); // Dialog-ga xir
+                  Navigator.pop(context); // HomeScreen ku laabo
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Post deleted successfully')),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context); // Dialog-ga xir
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${e.toString()}'), backgroundColor: Colors.red),
+                  );
+                }
               }
             },
-            child: const Text('Delete', style: TextStyle(color: AppTheme.accentColor)),
+            child: const Text('Delete', style: TextStyle(color: AppTheme.primaryColor)),
           ),
         ],
       ),

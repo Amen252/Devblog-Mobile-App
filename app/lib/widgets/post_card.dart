@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../models/post_model.dart';
+import '../providers/post_provider.dart';
 import '../screens/post_detail_screen.dart';
 import '../theme/app_theme.dart';
 
+// PostCard: Waa qayb yar (Widget) oo loo isticmaalo in qoraal kasta lagu muujiyo liiska hore.
 class PostCard extends StatelessWidget {
   final Post post;
 
@@ -19,6 +22,7 @@ class PostCard extends StatelessWidget {
         ),
       ),
       child: InkWell(
+        // Marka la taabto qoraalka, wuxuu u gudbiyaa bogga faahfaahinta.
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => PostDetailScreen(post: post)),
@@ -28,7 +32,7 @@ class PostCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header: Author Info
+              // Qaybta sare: Sawirka iyo magaca qofka qoray.
               Row(
                 children: [
                   CircleAvatar(
@@ -46,7 +50,7 @@ class PostCard extends StatelessWidget {
                       children: [
                         Text(
                           post.authorName,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppTheme.textColor),
                         ),
                         Text(
                           DateFormat('MMM dd').format(post.createdAt),
@@ -55,18 +59,25 @@ class PostCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(Icons.more_horiz, color: AppTheme.textSecondaryColor, size: 20),
+                  Consumer<AuthProvider>(
+                    builder: (context, auth, _) {
+                      final isOwner = auth.user?.id == post.authorId;
+                      return isOwner 
+                          ? const Icon(Icons.more_horiz, color: AppTheme.textSecondaryColor, size: 20)
+                          : const SizedBox.shrink();
+                    },
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
               
-              // Title
+              // Ciwaanka qoraalka.
               Text(
                 post.title,
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: AppTheme.textColor,
                   height: 1.3,
                 ),
                 maxLines: 2,
@@ -74,7 +85,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // Content snippet
+              // Qayb yar oo ka mid ah nuxurka qoraalka.
               Text(
                 post.content,
                 style: const TextStyle(
@@ -87,7 +98,7 @@ class PostCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Footer: Category & Actions
+              // Qaybta hoose: Qaybta uu ka tirsan yahay iyo badhamada waxqabadka.
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -95,9 +106,21 @@ class PostCard extends StatelessWidget {
                   Row(
                     children: [
                       _buildActionIcon(Icons.arrow_upward_rounded),
-                      const SizedBox(width: 20),
-                      _buildActionIcon(Icons.bookmark_border_rounded),
-                      const SizedBox(width: 20),
+                      const SizedBox(width: 8),
+                      Consumer<PostProvider>(
+                        builder: (context, provider, _) {
+                          final isBookmarked = provider.isBookmarked(post.id);
+                          return IconButton(
+                            onPressed: () => provider.toggleBookmark(post.id),
+                            icon: Icon(
+                              isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                              color: isBookmarked ? AppTheme.primaryColor : AppTheme.textSecondaryColor,
+                              size: 20,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
                       _buildActionIcon(Icons.share_outlined),
                     ],
                   ),
@@ -129,3 +152,4 @@ class PostCard extends StatelessWidget {
     return Icon(icon, color: AppTheme.textSecondaryColor, size: 18);
   }
 }
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_logo.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  // Shaqada login-ka: Waxay u baaqdaa AuthProvider si loo hubiyo aqoonsiga qofka.
   Future<void> _login() async {
     try {
       await Provider.of<AuthProvider>(context, listen: false).login(
@@ -24,10 +26,11 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } catch (e) {
       if (mounted) {
+        // Haddii uu khalad dhaco, waxaa la tusayaa SnackBar ka digaya qofka.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: AppTheme.accentColor,
+            backgroundColor: AppTheme.primaryColor,
           ),
         );
       }
@@ -46,27 +49,11 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 80),
                 // Logo
-                Row(
-                   children: [
-                     Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(Icons.code, color: AppTheme.primaryColor, size: 32),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text(
-                      'DevBlog',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.white),
-                    ),
-                   ],
-                ),
+                const AppLogo(),
                 const SizedBox(height: 48),
                 const Text(
                   'Welcome Back',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textColor),
                 ),
                 const SizedBox(height: 8),
                 const Text(

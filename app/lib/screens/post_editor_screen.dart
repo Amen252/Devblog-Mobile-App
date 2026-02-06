@@ -23,7 +23,7 @@ class _PostEditorScreenState extends State<PostEditorScreen> {
     super.initState();
     _titleController = TextEditingController(text: widget.post?.title ?? '');
     _contentController = TextEditingController(text: widget.post?.content ?? '');
-    _selectedCategory = widget.post?.category ?? 'Technology';
+    _selectedCategory = widget.post?.category ?? 'Programming';
   }
 
   @override
@@ -33,16 +33,19 @@ class _PostEditorScreenState extends State<PostEditorScreen> {
     super.dispose();
   }
 
+  // Shaqadan waxay abuurtaa ama cusubaysaa qoraal (Post).
   Future<void> _savePost() async {
     final postProvider = Provider.of<PostProvider>(context, listen: false);
     try {
       if (widget.post == null) {
+        // Haddii qoraalku cusub yahay
         await postProvider.createPost(
           _titleController.text,
           _contentController.text,
           _selectedCategory,
         );
       } else {
+        // Haddii qoraal hore loo saxayo
         await postProvider.updatePost(
           widget.post!.id,
           _titleController.text,
@@ -53,8 +56,9 @@ class _PostEditorScreenState extends State<PostEditorScreen> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
+        // Haddii uu khalad dhaco xilliga kaydinta.
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.accentColor),
+          SnackBar(content: Text(e.toString()), backgroundColor: AppTheme.primaryColor),
         );
       }
     }
@@ -99,7 +103,7 @@ class _PostEditorScreenState extends State<PostEditorScreen> {
                 labelText: 'Category',
                 prefixIcon: Icon(Icons.category_outlined),
               ),
-              items: ['Technology', 'Lifestyle', 'Education', 'Other']
+              items: ['Programming', 'UI/UX', 'General']
                   .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                   .toList(),
               onChanged: (val) => setState(() => _selectedCategory = val!),

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Ultra-Dark Premium Palette (inspired by daily.dev)
-  static const backgroundColor = Color(0xFF0B0E14); // Near black
-  static const surfaceColor = Color(0xFF151921); // Card background
-  static const primaryColor = Color(0xFF6366F1); // Brand Indigo
-  static const secondaryColor = Color(0xFF10B981); // Emerald
-  static const textColor = Color(0xFFE2E8F0); // Off-white text
-  static const textSecondaryColor = Color(0xFF94A3B8); // Muted text
-  static const accentColor = Color(0xFFF43F5E); // Rose
-  static const dividerColor = Color(0xFF1E293B);
+  // Nidaamka midabada: Premium Light Mode (Slate & Indigo)
+  
+  static const backgroundColor = Color(0xFFF8FAFC); // Midabka asalka ah (Slate 50)
+  static const surfaceColor = Color(0xFFFFFFFF);    // Midabka kaararka (White)
+  static const primaryColor = Color(0xFF6366F1);    // Midabka koowaad (Indigo)
+  static const secondaryColor = Color(0xFF6366F1);  // Midabka labaad
+  static const textColor = Color(0xFF0F172A);       // Midabka qoraalka (Slate 900)
+  static const textSecondaryColor = Color(0xFF64748B); // Qoraalka labaad (Slate 500)
+  static const dividerColor = Color(0xFFE2E8F0);    // Midabka xariiqyada (Slate 200)
 
-  static ThemeData get darkTheme {
+  static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: backgroundColor,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
         surface: surfaceColor,
@@ -24,14 +24,19 @@ class AppTheme {
         background: backgroundColor,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: backgroundColor,
+        backgroundColor: surfaceColor,
         elevation: 0,
         centerTitle: false,
         iconTheme: IconThemeData(color: textColor),
+        titleTextStyle: TextStyle(
+          color: textColor,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: backgroundColor,
-        selectedItemColor: Colors.white,
+        backgroundColor: surfaceColor,
+        selectedItemColor: primaryColor,
         unselectedItemColor: textSecondaryColor,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
@@ -41,7 +46,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: dividerColor, width: 0.5),
+          side: const BorderSide(color: dividerColor, width: 1),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -62,4 +67,8 @@ class AppTheme {
       ),
     );
   }
+
+  // Waxaan haynaa darkTheme laakiin hadda waxaan u bedelnay light
+  static ThemeData get darkTheme => lightTheme; 
 }
+

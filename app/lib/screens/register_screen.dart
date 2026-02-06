@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_logo.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,6 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String _selectedGender = 'male';
   bool _isPasswordVisible = false;
 
+  // Shaqada is-diiwaangelinta: Waxay xogta u gudbisaa AuthProvider.
   Future<void> _register() async {
     try {
       await Provider.of<AuthProvider>(context, listen: false).register(
@@ -28,10 +30,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
+        // Haddii ay ciladi dhacdo xilliga is-diiwaangelinta.
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: AppTheme.accentColor,
+            backgroundColor: AppTheme.primaryColor,
           ),
         );
       }
@@ -49,9 +52,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const AppLogo(size: 32, fontSize: 24),
+                const SizedBox(height: 24),
                 const Text(
                   'Join DevBlog',
-                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppTheme.textColor),
                 ),
                 const SizedBox(height: 8),
                 const Text(
