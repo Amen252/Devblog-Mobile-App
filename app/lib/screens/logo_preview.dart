@@ -30,7 +30,7 @@ class LogoPreviewScreen extends StatelessWidget {
                 ],
               ),
               child: Image.asset(
-                'assets/icon/icon.png',
+                'assets/icon/icon.jpeg',
                 width: 180,
                 height: 180,
                 fit: BoxFit.contain,
