@@ -28,10 +28,21 @@ class AppLogo extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Icon(
-            Icons.terminal_rounded,
-            color: AppTheme.primaryColor,
-            size: size,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(size * 0.2),
+            child: Image.asset(
+              'assets/icon/icon.jpeg',
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.menu_book_rounded,
+                  color: AppTheme.primaryColor,
+                  size: size,
+                );
+              },
+            ),
           ),
         ),
         if (showText) ...[
