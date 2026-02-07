@@ -21,10 +21,10 @@ class AppLogo extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(size * 0.25),
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor.withOpacity(0.1),
+            color: AppTheme.primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(size * 0.3),
             border: Border.all(
-              color: AppTheme.primaryColor.withOpacity(0.2),
+              color: AppTheme.primaryColor.withValues(alpha: 0.2),
               width: 1,
             ),
           ),

@@ -38,9 +38,9 @@ class _DevBlogAppState extends State<DevBlogApp> {
       // Marka app-ka la furo, wuxuu isku dayayaa inuu qofka si toos ah u gashiyo (Auto-login)
       Future.microtask(() {
         if (mounted) {
-          Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((_) {
-            print("AutoLogin complete");
-          });
+            Provider.of<AuthProvider>(context, listen: false).tryAutoLogin().then((_) {
+              // AutoLogin complete
+            });
         }
       });
       _isInit = true;
