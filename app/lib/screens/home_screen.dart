@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/post_provider.dart';
-import '../providers/auth_provider.dart';
+// import '../providers/auth_provider.dart';
 import '../widgets/post_card.dart';
 import '../widgets/app_logo.dart';
 import '../theme/app_theme.dart';
@@ -294,7 +294,7 @@ class BookmarksView extends StatelessWidget {
   const BookmarksView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return Scaffold(
       appBar: AppBar(title: const Text('Saved Posts')),
       body: Consumer<PostProvider>(

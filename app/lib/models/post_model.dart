@@ -1,3 +1,4 @@
+// Abuurista class lagu magacaabo Post
 class Post {
   final String id;
   final String title;
@@ -8,6 +9,7 @@ class Post {
   final String category;
   final DateTime createdAt;
 
+// Constructor-ka class-ka Post
   Post({
     required this.id,
     required this.title,
@@ -19,6 +21,8 @@ class Post {
     required this.createdAt,
   });
 
+
+  // Factory method oo JSON uga beddelaya Post object
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       id: json['_id'],
@@ -31,7 +35,7 @@ class Post {
       createdAt: DateTime.parse(json['createdAt']),
     );
   }
-
+// Method u beddelaya Post object JSON
   Map<String, dynamic> toJson() {
     return {
       'title': title,
